@@ -219,8 +219,10 @@ with tab1:
                     st.metric("Confidence Score", f"{res['confidence'] * 100:.1f}%")
 
                     st.write("**Class Probability Distribution:**")
-                    st.progress(res["probabilities"]["FAKE"], text=f"Fake: {res['probabilities']['FAKE']*100:.1f}%")
-                    st.progress(res["probabilities"]["REAL"], text=f"Real: {res['probabilities']['REAL']*100:.1f}%")
+                    fake_p = float(np.clip(res["probabilities"]["FAKE"], 0.0, 1.0))
+                    real_p = float(np.clip(res["probabilities"]["REAL"], 0.0, 1.0))
+                    st.progress(fake_p, text=f"Fake: {fake_p*100:.1f}%")
+                    st.progress(real_p, text=f"Real: {real_p*100:.1f}%")
 
                 with res_col2:
                     st.markdown("##### Stylometric & Linguistic Signals")
