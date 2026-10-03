@@ -1,0 +1,3 @@
+# Raw data directory
+# CSV files (True.csv and Fake.csv) are automatically downloaded via:
+# python src/download_data.py

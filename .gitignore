@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.venv/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+.venv/
+
+# Large Datasets (> 50MB exceeds GitHub push limits)
+data/raw/*.csv
+data/processed/*.csv
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment & Secrets
+.env
+.env.local
+
+# Vercel & Node
+.vercel
+node_modules/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
