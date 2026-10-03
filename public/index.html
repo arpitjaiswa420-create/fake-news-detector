@@ -389,34 +389,35 @@
 
       const payload = isUrlMode ? { url, explain } : { title, text, explain };
 
-      try {
-        let response = await fetch('/predict', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+      let data = null;
+      const candidateEndpoints = ['/predict', '/api/predict', 'http://127.0.0.1:8000/predict'];
 
-        if (!response.ok) {
-          response = await fetch('/api/predict', {
+      for (const endpoint of candidateEndpoints) {
+        try {
+          const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           });
+          if (response.ok) {
+            data = await response.json();
+            break;
+          }
+        } catch (fetchErr) {
+          // Continue to next candidate
         }
+      }
 
-        let data;
-        if (response.ok) {
-          data = await response.json();
-        } else {
-          // Client-side fallback calculation for static Vercel preview
-          data = computeLocalFallback(title, text, isUrlMode);
-        }
-
+      if (data) {
         renderResult(data);
-      } catch (err) {
-        console.warn("API request failed, running local heuristic fallback:", err);
-        const data = computeLocalFallback(title, text, isUrlMode);
-        renderResult(data);
+      } else {
+        alert(
+          "⚠️ Could not reach the TruthPulse Python backend server.\n\n" +
+          "To test with live Machine Learning models:\n" +
+          "1. Open your terminal in the project directory\n" +
+          "2. Run: python app.py\n" +
+          "3. Open http://127.0.0.1:8000 in your browser (or run 'streamlit run ui/app.py')"
+        );
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Run Detection`;

@@ -43,6 +43,10 @@ REUTERS_PATTERN = re.compile(
     r"^(?:[A-Za-z\s,]+)?\s*\((?:Reuters|REUTERS)\)\s*[-—–:]\s*",
     flags=re.IGNORECASE
 )
+HEADLINE_PREFIX_PATTERN = re.compile(
+    r"^(?:BREAKING|BREAKING NEWS|ALERT|JUST IN|DEVELOPING|EXCLUSIVE|WATCH|UPDATE|VIDEO)\s*[-—–:]\s*",
+    flags=re.IGNORECASE
+)
 URL_PATTERN = re.compile(r"https?://\S+|www\.\S+")
 HTML_TAG_PATTERN = re.compile(r"<.*?>")
 EMAIL_PATTERN = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b")
@@ -74,10 +78,11 @@ class TextCleaner:
         Clean raw text string:
         1. Decode HTML entities and strip HTML tags
         2. Remove publisher wire prefixes (e.g. 'WASHINGTON (Reuters) - ')
-        3. Remove URLs and emails
-        4. Lowercase
-        5. Remove special characters and digits
-        6. Lemmatize and remove stopwords
+        3. Remove common news alert prefixes (e.g. 'BREAKING:')
+        4. Remove URLs and emails
+        5. Lowercase
+        6. Remove special characters and digits
+        7. Lemmatize and remove stopwords
         """
         if not isinstance(text, str) or not text.strip():
             return ""
@@ -88,6 +93,9 @@ class TextCleaner:
         # Remove wire datelines from beginning
         if self.remove_wire_prefixes:
             text = REUTERS_PATTERN.sub("", text)
+
+        # Remove news alert prefixes (e.g. 'BREAKING:')
+        text = HEADLINE_PREFIX_PATTERN.sub("", text)
 
         # Remove HTML tags
         text = HTML_TAG_PATTERN.sub(" ", text)

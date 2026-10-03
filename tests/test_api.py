@@ -15,9 +15,15 @@ def client():
 
 
 def test_root_endpoint(client):
-    response = client.get("/")
-    assert response.status_code == 200
-    data = response.json()
+    # Browser request receives interactive HTML dashboard
+    response_html = client.get("/")
+    assert response_html.status_code == 200
+    assert "<!DOCTYPE html>" in response_html.text or "TruthPulse" in response_html.text
+
+    # API JSON client receives sitemap JSON
+    response_json = client.get("/", headers={"Accept": "application/json"})
+    assert response_json.status_code == 200
+    data = response_json.json()
     assert data["status"] == "online"
     assert "endpoints" in data
 

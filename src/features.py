@@ -99,6 +99,12 @@ def compute_lexical_sentiment(tokens: List[str]) -> Tuple[float, float]:
     return float(polarity), float(subjectivity)
 
 
+HEADLINE_PREFIX_PATTERN = re.compile(
+    r"^(?:BREAKING|BREAKING NEWS|ALERT|JUST IN|DEVELOPING|EXCLUSIVE|WATCH|UPDATE|VIDEO)\s*[-—–:]\s*",
+    flags=re.IGNORECASE
+)
+
+
 class MetadataFeatureExtractor(BaseEstimator, TransformerMixin):
     """
     Extracts stylometric and metadata features from raw article text and headlines.
@@ -154,13 +160,14 @@ class MetadataFeatureExtractor(BaseEstimator, TransformerMixin):
         punct_count = sum(1 for c in full_text if c in string.punctuation)
         punct_density = (punct_count / char_count) if char_count > 0 else 0.0
 
-        # Title specific metrics (strong clickbait indicators)
-        title_chars = len(title)
-        title_words = len(title.split())
-        title_letters = sum(1 for c in title if c.isalpha())
-        title_caps = sum(1 for c in title if c.isupper())
+        # Title specific metrics (strip standard alert tags so 'BREAKING:' doesn't artificially inflate caps ratio)
+        clean_title = HEADLINE_PREFIX_PATTERN.sub("", title).strip()
+        title_chars = len(clean_title)
+        title_words = len(clean_title.split())
+        title_letters = sum(1 for c in clean_title if c.isalpha())
+        title_caps = sum(1 for c in clean_title if c.isupper())
         title_caps_ratio = (title_caps / title_letters) if title_letters > 0 else 0.0
-        title_exclamations = title.count("!")
+        title_exclamations = clean_title.count("!")
 
         # Readability & Sentiment
         readability = estimate_flesch_reading_ease(full_text)

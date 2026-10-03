@@ -97,10 +97,17 @@ class PredictResponse(BaseModel):
     )
 
 
+from fastapi import FastAPI, HTTPException, UploadFile, File, Query, Request
+from fastapi.responses import FileResponse
+
 # --- Endpoints ---
 
 @app.get("/")
-def root():
+def root(request: Request):
+    accept = request.headers.get("accept", "")
+    html_path = PROJECT_ROOT / "public" / "index.html"
+    if "application/json" not in accept and html_path.exists():
+        return FileResponse(html_path)
     return {
         "service": "Fake News Detector API",
         "status": "online",
