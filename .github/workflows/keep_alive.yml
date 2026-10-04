@@ -1,0 +1,24 @@
+name: Keep Streamlit App Always Active
+
+on:
+  schedule:
+    # Runs every 6 hours to prevent Streamlit Community Cloud from going to sleep
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  ping-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit App
+        env:
+          APP_URL: ${{ secrets.STREAMLIT_APP_URL || 'https://arpitjaiswa420-create-fake-news-detector.streamlit.app' }}
+        run: |
+          echo "Pinging Streamlit app at: $APP_URL"
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$APP_URL" || echo "000")
+          echo "HTTP Response Status: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 400 ]; then
+            echo "✅ Streamlit app is awake and responding!"
+          else
+            echo "⚠️ App response status was $HTTP_STATUS, ping sent successfully."
+          fi

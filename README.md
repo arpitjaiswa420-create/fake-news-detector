@@ -180,9 +180,24 @@ tests/test_preprocessing.py ......
 
 ---
 
-## 💻 Web Interface & REST API Usage
+### 1-Click Desktop Launcher (No Terminal Typing Needed)
 
-### Launch the Streamlit Web Application
+You do **not** need to open a terminal or type any commands:
+- **Option 1 (Normal Launcher):** Double-click [`Start_TruthPulse.bat`](Start_TruthPulse.bat) in the project root. It automatically launches the app and opens `http://localhost:8501` in your browser.
+- **Option 2 (Invisible Background Mode):** Double-click [`Start_TruthPulse_Hidden.vbs`](Start_TruthPulse_Hidden.vbs). It starts the app silently in the background with zero terminal windows and opens your browser.
+
+---
+
+### Cloud 24/7 Deployment (Always Active & Never Sleeps)
+
+This repository includes an automated **Keep-Alive GitHub Action** ([`.github/workflows/keep_alive.yml`](.github/workflows/keep_alive.yml)):
+- Every 6 hours, GitHub Actions automatically pings your live Streamlit Cloud app URL.
+- This prevents Streamlit Community Cloud from ever putting your container to sleep due to inactivity!
+- Your public browser link remains **active 24/7 worldwide** without needing your local computer on.
+
+---
+
+### Launching via Terminal (For Developers)
 
 ```bash
 streamlit run ui/app.py
